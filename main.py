@@ -76,12 +76,28 @@ for folder in folder_list:
 
 # Montly messages per server :
 monthly_server_message_counts = {}
+monthly_dm_message_counts = {}
 servers = []
 for folder in folder_list:
     with open(folder + "/channel.json", 'r', encoding="utf-8") as f:
         server_data = json.load(f)
         if server_data['type'] == 1 or server_data['type'] == 3: # 1 is DM, 3 is group DM
-            continue
+            with open(folder + "/messages.json", 'r', encoding="utf-8") as f:
+                data = json.load(f)
+                for message in data:
+                    date = message['Timestamp']
+                    month = date[:7]
+                    if server_data['type'] == 1: channel_name = index[server_data['id']].replace("Direct Message with ", "").replace("#0", "")
+                    else: channel_name = server_data.get('name', None)
+                    if channel_name is None or channel_name == "":
+                        channel_name = "@Unknown"
+                    if month in monthly_dm_message_counts:
+                        if channel_name in monthly_dm_message_counts[month]:
+                            monthly_dm_message_counts[month][channel_name] += 1
+                        else:
+                            monthly_dm_message_counts[month][channel_name] = 1
+                    else:
+                        monthly_dm_message_counts[month] = {channel_name: 1}
         else:
             with open(folder + "/messages.json", 'r', encoding="utf-8") as f:
                 data = json.load(f)
@@ -168,6 +184,21 @@ for month in sorted_months:
     for server in sorted_servers:
         if server in monthly_server_message_counts[month]:
             line += "," + str(monthly_server_message_counts[month][server])
+        else:
+            line += ",0"
+    sortie.write(line + "\n")
+sortie.close()
+
+# Monthly messages per dm
+sorted_months = sorted(monthly_dm_message_counts.keys())
+sorted_dms = sorted(people_dm_counts.keys(), key=lambda dm: people_dm_counts[dm], reverse=True)
+sortie = open("output/monthly_dm_message_counts.csv", "w", encoding="utf-8")
+sortie.write("month," + ",".join(sorted_dms) + "\n")
+for month in sorted_months:
+    line = month
+    for dm in sorted_dms:
+        if dm in monthly_dm_message_counts[month]:
+            line += "," + str(monthly_dm_message_counts[month][dm])
         else:
             line += ",0"
     sortie.write(line + "\n")
