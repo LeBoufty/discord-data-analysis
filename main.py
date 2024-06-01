@@ -81,7 +81,7 @@ except FileExistsError:
 
 # Monthly message counts
 sorted_keys = sorted(monthly_message_counts.keys())
-sortie = open("output/monthly_message_counts.csv", "w")
+sortie = open("output/monthly_message_counts.csv", "w", encoding="utf-8")
 sortie.write("month,count\n")
 for key in sorted_keys:
     sortie.write(key + "," + str(monthly_message_counts[key]) + "\n")
@@ -89,7 +89,7 @@ sortie.close()
 
 # Meow counts
 sorted_keys = sorted(meow_count.keys())
-sortie = open("output/meow_counts.csv", "w")
+sortie = open("output/meow_counts.csv", "w", encoding="utf-8")
 sortie.write("month,count\n")
 for key in sorted_keys:
     sortie.write(key + "," + str(meow_count[key]) + "\n")
@@ -104,7 +104,7 @@ for key in sorted_keys:
 sortie.close()
 
 # Messages sent in servers vs dms
-sortie = open("output/server_dm_ratio.csv", "w")
+sortie = open("output/server_dm_ratio.csv", "w", encoding="utf-8")
 sortie.write("type,count\n")
 sortie.write("server," + str(messages_sent_in_servers) + "\n")
 sortie.write("dm," + str(messages_sent_in_dms) + "\n")
@@ -112,7 +112,7 @@ sortie.close()
 
 # Messages sent to people in dms
 sorted_keys = sorted(people_dm_counts.keys(), key=lambda k: people_dm_counts[k], reverse=True)
-sortie = open("output/people_dm_counts.csv", "w")
+sortie = open("output/people_dm_counts.csv", "w", encoding="utf-8")
 sortie.write("person,count\n")
 others = 0
 for key in sorted_keys:
