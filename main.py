@@ -160,7 +160,7 @@ sortie.close()
 
 # Monthly messages per server
 sorted_months = sorted(monthly_server_message_counts.keys())
-sorted_servers = sorted(servers)
+sorted_servers = sorted(servers, key=lambda server: next((month for month in sorted_months if monthly_server_message_counts[month].get(server, 0) != 0), None))
 sortie = open("output/monthly_server_message_counts.csv", "w", encoding="utf-8")
 sortie.write("month," + ",".join(sorted_servers) + "\n")
 for month in sorted_months:
