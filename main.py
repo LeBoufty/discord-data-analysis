@@ -74,6 +74,41 @@ for folder in folder_list:
                     else:
                         server_message_counts[server_name] = msg_count
 
+# Montly messages per server :
+monthly_server_message_counts = {}
+servers = []
+for folder in folder_list:
+    with open(folder + "/channel.json", 'r', encoding="utf-8") as f:
+        server_data = json.load(f)
+        if server_data['type'] == 1 or server_data['type'] == 3: # 1 is DM, 3 is group DM
+            continue
+        else:
+            with open(folder + "/messages.json", 'r', encoding="utf-8") as f:
+                data = json.load(f)
+                for message in data:
+                    date = message['Timestamp']
+                    month = date[:7]
+                    if 'guild' in server_data:
+                        server_name = server_data['guild']['name']
+                        if server_name not in servers: servers.append(server_name)
+                        if month in monthly_server_message_counts:
+                            if server_name in monthly_server_message_counts[month]:
+                                monthly_server_message_counts[month][server_name] += 1
+                            else:
+                                monthly_server_message_counts[month][server_name] = 1
+                        else:
+                            monthly_server_message_counts[month] = {server_name: 1}
+                    else:
+                        server_name = index[server_data['id']].split(" in ")[-1]
+                        if server_name not in servers: servers.append(server_name)
+                        if month in monthly_server_message_counts:
+                            if server_name in monthly_server_message_counts[month]:
+                                monthly_server_message_counts[month][server_name] += 1
+                            else:
+                                monthly_server_message_counts[month][server_name] = 1
+                        else:
+                            monthly_server_message_counts[month] = {server_name: 1}
+
 try:
     os.mkdir("output")
 except FileExistsError:
@@ -121,4 +156,19 @@ for key in sorted_keys:
     else:
         sortie.write(key + "," + str(people_dm_counts[key]) + "\n")
 sortie.write("Others," + str(others) + "\n")
+sortie.close()
+
+# Monthly messages per server
+sorted_months = sorted(monthly_server_message_counts.keys())
+sorted_servers = sorted(servers)
+sortie = open("output/monthly_server_message_counts.csv", "w", encoding="utf-8")
+sortie.write("month," + ",".join(sorted_servers) + "\n")
+for month in sorted_months:
+    line = month
+    for server in sorted_servers:
+        if server in monthly_server_message_counts[month]:
+            line += "," + str(monthly_server_message_counts[month][server])
+        else:
+            line += ",0"
+    sortie.write(line + "\n")
 sortie.close()
