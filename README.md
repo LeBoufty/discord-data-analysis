@@ -12,3 +12,11 @@ It will give you :
 * Same as previous point but for DMs
 
 Note : Deleted servers won't be accounted for, fortunately (that would mean discord kept all the data about deleted servers which would suck mad balls). Deleted users and group chats will be accounted as "Unknown Participant" or "Others".
+
+## How do I get my data ?
+
+1. Go to user settings
+2. Confidentiality & Security section
+3. Scroll to the bottom and click "get all my data" or something
+4. Wait for several days
+
