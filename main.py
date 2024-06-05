@@ -170,7 +170,7 @@ for key in sorted_keys:
     if key == "@Unknown":
         others += people_dm_counts[key]
     else:
-        sortie.write(key + "," + str(people_dm_counts[key]) + "\n")
+        sortie.write('"'+key+'"' + "," + str(people_dm_counts[key]) + "\n")
 sortie.write("Others," + str(others) + "\n")
 sortie.close()
 
@@ -178,7 +178,7 @@ sortie.close()
 sorted_months = sorted(monthly_server_message_counts.keys())
 sorted_servers = sorted(servers, key=lambda server: next((month for month in sorted_months if monthly_server_message_counts[month].get(server, 0) != 0), None))
 sortie = open("output/monthly_server_message_counts.csv", "w", encoding="utf-8")
-sortie.write("month," + ",".join(sorted_servers) + "\n")
+sortie.write("month," + '"' +'","'.join(sorted_servers)+ '"' + "\n")
 for month in sorted_months:
     line = month
     for server in sorted_servers:
@@ -193,7 +193,7 @@ sortie.close()
 sorted_months = sorted(monthly_dm_message_counts.keys())
 sorted_dms = sorted(people_dm_counts.keys(), key=lambda dm: people_dm_counts[dm], reverse=True)
 sortie = open("output/monthly_dm_message_counts.csv", "w", encoding="utf-8")
-sortie.write("month," + ",".join(sorted_dms) + "\n")
+sortie.write("month," + '"' + '","'.join(sorted_dms) + '"' + "\n")
 for month in sorted_months:
     line = month
     for dm in sorted_dms:
