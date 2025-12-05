@@ -1,5 +1,7 @@
 # Discord data analysis
 
+_Discord Checkpoint for people who care about their privacy_
+
 Gives you some CSVs to look at how much you wasted your life on this goddamn website. Simply put this script in the root folder of your discord data dump (i.e. the folder with `README.txt` in it) and run it !
 
 It will give you :
