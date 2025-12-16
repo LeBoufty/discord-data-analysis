@@ -1,3 +1,4 @@
+# Old names
 account/
 activities/
 activity/
@@ -6,3 +7,11 @@ output/
 programs/
 servers/
 README.txt
+
+# New names in french ??? for some reason, they translate your folders to your language
+Activité/
+Activités/
+Compte/
+Messages/
+Publicités/
+Serveurs/
