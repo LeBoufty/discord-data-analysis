@@ -18,12 +18,15 @@ channel_info_list = [
     if os.path.isdir(os.path.join(folder_path, folder))
 ]
 index = json.load(open("Messages/index.json", "r"))
+YEAR: str | None = "2025"
 
 monthly_message_counts = {}
 meow_count = {}
 for file in file_list:
     with open(file, "r", encoding="utf-8") as f:
         data = json.load(f)
+        if YEAR is not None:
+            data = [m for m in data if m["Timestamp"][:4] == YEAR]
         for message in data:
             date = message["Timestamp"]
             month = date[:7]
@@ -56,13 +59,15 @@ for folder in folder_list:
         server_data = json.load(f)
         # DMs
         if (
-            server_data["type"] == 1 or server_data["type"] == 3
+            server_data["type"] == "DM" or server_data["type"] == "GROUP_DM"
         ):  # 1 is DM, 3 is group DM
             with open(folder + "/messages.json", "r", encoding="utf-8") as f:
                 data = json.load(f)
+                if YEAR is not None:
+                    data = [m for m in data if m["Timestamp"][:4] == YEAR]
                 msg_count = data.__len__()
                 messages_sent_in_dms += msg_count
-                if server_data["type"] == 1:
+                if server_data["type"] == "DM":
                     channel_name = (
                         index[server_data["id"]]
                         .replace("Direct Message with ", "")
@@ -80,12 +85,16 @@ for folder in folder_list:
         else:
             with open(folder + "/messages.json", "r", encoding="utf-8") as f:
                 data = json.load(f)
+                if YEAR is not None:
+                    data = [m for m in data if m["Timestamp"][:4] == YEAR]
                 msg_count = data.__len__()
                 messages_sent_in_servers += msg_count
             if "guild" in server_data:
                 server_name = server_data["guild"]["name"]
                 with open(folder + "/messages.json", "r", encoding="utf-8") as f:
                     data = json.load(f)
+                    if YEAR is not None:
+                        data = [m for m in data if m["Timestamp"][:4] == YEAR]
                     msg_count = data.__len__()
                     if server_name in server_message_counts:
                         server_message_counts[server_name] += msg_count
@@ -95,6 +104,8 @@ for folder in folder_list:
                 server_name = index[server_data["id"]].split(" in ")[-1]
                 with open(folder + "/messages.json", "r", encoding="utf-8") as f:
                     data = json.load(f)
+                    if YEAR is not None:
+                        data = [m for m in data if m["Timestamp"][:4] == YEAR]
                     msg_count = data.__len__()
                     if server_name in server_message_counts:
                         server_message_counts[server_name] += msg_count
@@ -109,14 +120,16 @@ for folder in folder_list:
     with open(folder + "/channel.json", "r", encoding="utf-8") as f:
         server_data = json.load(f)
         if (
-            server_data["type"] == 1 or server_data["type"] == 3
+            server_data["type"] == "DM" or server_data["type"] == "GROUP_DM"
         ):  # 1 is DM, 3 is group DM
             with open(folder + "/messages.json", "r", encoding="utf-8") as f:
                 data = json.load(f)
+                if YEAR is not None:
+                    data = [m for m in data if m["Timestamp"][:4] == YEAR]
                 for message in data:
                     date = message["Timestamp"]
                     month = date[:7]
-                    if server_data["type"] == 1:
+                    if server_data["type"] == "DM":
                         channel_name = (
                             index[server_data["id"]]
                             .replace("Direct Message with ", "")
@@ -136,6 +149,8 @@ for folder in folder_list:
         else:
             with open(folder + "/messages.json", "r", encoding="utf-8") as f:
                 data = json.load(f)
+                if YEAR is not None:
+                    data = [m for m in data if m["Timestamp"][:4] == YEAR]
                 for message in data:
                     date = message["Timestamp"]
                     month = date[:7]
@@ -190,7 +205,8 @@ sorted_keys = sorted(
 sortie = open("output/server_message_counts.csv", "w", encoding="utf-8")
 sortie.write("server,count\n")
 for key in sorted_keys:
-    sortie.write('"' + key + '"' + "," + str(server_message_counts[key]) + "\n")
+    if server_message_counts[key] > 0:
+        sortie.write('"' + key + '"' + "," + str(server_message_counts[key]) + "\n")
 sortie.close()
 
 # Messages sent in servers vs dms
@@ -208,10 +224,11 @@ sortie = open("output/people_dm_counts.csv", "w", encoding="utf-8")
 sortie.write("person,count\n")
 others = 0
 for key in sorted_keys:
-    if key == "@Unknown":
-        others += people_dm_counts[key]
-    else:
-        sortie.write('"' + key + '"' + "," + str(people_dm_counts[key]) + "\n")
+    if people_dm_counts[key] > 0:
+        if key == "@Unknown":
+            others += people_dm_counts[key]
+        else:
+            sortie.write('"' + key + '"' + "," + str(people_dm_counts[key]) + "\n")
 sortie.write("Others," + str(others) + "\n")
 sortie.close()
 
